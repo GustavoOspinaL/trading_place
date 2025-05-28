@@ -4,7 +4,7 @@ pipeline {
     tools {
         nodejs 'Node_24' // Configurado en Global Tools
     }
-    
+
     triggers {
         githubPush()
     }
@@ -25,6 +25,12 @@ pipeline {
             }
         }
 
+        stage('Build') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        
         stage('Pruebas Unitarias') {
             steps {
                 echo 'Ejecutando pruebas...'
