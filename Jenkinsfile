@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'Node_24' // Configurado en Global Tools
+    }
+    
     triggers {
         githubPush()
     }
