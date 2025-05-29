@@ -49,40 +49,38 @@ pipeline {
         // Etapa 3: Pruebas Paralelizadas
         stage('Pruebas en Paralelo') {
             parallel {
-                // Pruebas en Chrome
-                stage('Pruebas Chrome') {
+                stage('Tests Chrome') {
                     steps {
                         script {
                             try {
-                                sh 'npm test -- --browser=chrome'
+                                sh 'BROWSER=chrome npm test -- --browser=chrome'
                             } catch (err) {
-                                echo "Pruebas en Chrome fallaron: ${err}"
-                                currentBuild.result = 'UNSTABLE'
+                                echo "Tests Chrome fallaron: ${err}"
+                                currentBuild.result = 'FAILURE'
                             }
                         }
                     }
                     post {
                         always {
+                            sh 'ls -l test-results'
                             junit 'test-results/junit-chrome.xml'
                         }
                     }
                 }
-
-                // Pruebas en Firefox
-                stage('Pruebas Firefox') {
+                stage('Tests Firefox') {
                     steps {
                         script {
                             try {
-                                sh 'npm test -- --browser=firefox'
-                                junit 'junit-firefox.xml'
+                                sh 'BROWSER=firefox npm test -- --browser=firefox'
                             } catch (err) {
-                                echo "Pruebas en Firefox fallaron: ${err}"
-                                currentBuild.result = 'UNSTABLE'
+                                echo "Tests Firefox fallaron: ${err}"
+                                currentBuild.result = 'FAILURE'
                             }
                         }
                     }
-                    post{
+                    post {
                         always {
+                            sh 'ls -l test-results'
                             junit 'test-results/junit-firefox.xml'
                         }
                     }
