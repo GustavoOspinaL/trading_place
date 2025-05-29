@@ -75,23 +75,23 @@ pipeline {
                 }
             }
         }
+    }
 
-        post {
-            always {
-                junit 'test-results/junit-chrome.xml'
-                junit 'test-results/junit-firefox.xml'
-                // Notificación por email del resultado
-                mail(
-                    to: 'anonimusa415@gmail.com',
-                    subject: "Pipeline ${currentBuild.result}: ${env.JOB_NAME}",
-                    body: """
-                        <h2>Resultado: ${currentBuild.result}</h2>
-                        <p><b>URL del Build:</b> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                        <p><b>Consola:</b> <a href="${env.BUILD_URL}console">Ver logs</a></p>
-                    """,
-                    mimeType: 'text/html'
-                )
-            }
+    post {
+        always {
+            junit 'test-results/junit-chrome.xml'
+            junit 'test-results/junit-firefox.xml'
+            // Notificación por email del resultado
+            mail(
+                to: 'anonimusa415@gmail.com',
+                subject: "Pipeline ${currentBuild.result}: ${env.JOB_NAME}",
+                body: """
+                    <h2>Resultado: ${currentBuild.result}</h2>
+                    <p><b>URL del Build:</b> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                    <p><b>Consola:</b> <a href="${env.BUILD_URL}console">Ver logs</a></p>
+                """,
+                mimeType: 'text/html'
+            )
         }
     }
 }
