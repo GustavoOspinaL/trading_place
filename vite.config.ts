@@ -9,9 +9,12 @@ export default defineConfig({
   test: {
     globals: true,
     setupFiles: './src/setupTests.ts',
-
+    reporters: [
+      'default',
+      ['junit', { outputFile: `test-results/junit-${process.env.BROWSER || 'default'}.xml` }]
+    ],
     // Ambiente dinámico según entorno
-    environment: browser ? 'browser' : 'jsdom',
+   /*  environment: browser ? 'browser' : 'jsdom',
 
     // Configuración solo si se usa navegador real
     ...(browser && {
@@ -31,6 +34,6 @@ export default defineConfig({
     ...(!browser && {
       reporters: ['default'],
       testTimeout: 5000,
-    })
+    }) */
   },
 })
