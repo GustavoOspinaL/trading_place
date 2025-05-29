@@ -22,7 +22,7 @@ export default defineConfig({
       },
       reporters: ['default', 'junit'],
       outputFile: {
-        junit: `junit-${browser}.xml`
+       junit: `test-results/junit-${browser}.xml`
       },
       testTimeout: 20000,
     }),
