@@ -31,6 +31,13 @@ pipeline {
                 sh 'npm run build'
             }
         }
+
+        // Crear carpeta para resultado de tests
+        stage('Prepare test-results folder') {
+            steps {
+                sh 'mkdir -p test-results'
+            }
+        }
         
         stage('Pruebas Unitarias') {
             steps {
@@ -48,11 +55,15 @@ pipeline {
                         script {
                             try {
                                 sh 'npm test -- --browser=chrome'
-                                junit 'junit-chrome.xml'
                             } catch (err) {
                                 echo "Pruebas en Chrome fallaron: ${err}"
                                 currentBuild.result = 'UNSTABLE'
                             }
+                        }
+                    }
+                    post {
+                        always {
+                            junit 'test-results/junit-chrome.xml'
                         }
                     }
                 }
@@ -68,6 +79,11 @@ pipeline {
                                 echo "Pruebas en Firefox fallaron: ${err}"
                                 currentBuild.result = 'UNSTABLE'
                             }
+                        }
+                    }
+                    post{
+                        always {
+                            junit 'test-results/junit-firefox.xml'
                         }
                     }
                 }
