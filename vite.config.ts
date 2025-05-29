@@ -9,14 +9,16 @@ export default defineConfig({
   test: {
     globals: true,
     setupFiles: './src/setupTests.ts',
+   
+    // Ambiente dinámico según entorno
+    environment: browser ? 'browser' : 'jsdom',
+
     reporters: [
       'default',
       ['junit', { outputFile: `test-results/junit-${process.env.BROWSER || 'default'}.xml` }]
     ],
-    // Ambiente dinámico según entorno
-   /*  environment: browser ? 'browser' : 'jsdom',
 
-    // Configuración solo si se usa navegador real
+    /* // Configuración solo si se usa navegador real
     ...(browser && {
       browser: {
         enabled: true,
