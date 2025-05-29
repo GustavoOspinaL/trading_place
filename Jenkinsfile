@@ -28,6 +28,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'npm install'
+                sh 'npm run build'
             }
         }
         
@@ -38,10 +39,38 @@ pipeline {
             }
         }
 
-        stage('Compilar Proyecto') {
-            steps {
-                echo 'Compilando proyecto...'
-                sh 'npm run build'
+        // Etapa 3: Pruebas Paralelizadas
+        stage('Pruebas en Paralelo') {
+            parallel {
+                // Pruebas en Chrome
+                stage('Pruebas Chrome') {
+                    steps {
+                        script {
+                            try {
+                                sh 'npm test -- --browser=chrome --watchAll=false --ci --reporters=jest-junit'
+                                junit 'junit-chrome.xml'
+                            } catch (err) {
+                                echo "Pruebas en Chrome fallaron: ${err}"
+                                currentBuild.result = 'UNSTABLE'
+                            }
+                        }
+                    }
+                }
+
+                // Pruebas en Firefox
+                stage('Pruebas Firefox') {
+                    steps {
+                        script {
+                            try {
+                                sh 'npm test -- --browser=firefox --watchAll=false --ci --reporters=jest-junit'
+                                junit 'junit-firefox.xml'
+                            } catch (err) {
+                                echo "Pruebas en Firefox fallaron: ${err}"
+                                currentBuild.result = 'UNSTABLE'
+                            }
+                        }
+                    }
+                }
             }
         }
     }
