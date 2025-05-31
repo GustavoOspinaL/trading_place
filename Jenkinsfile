@@ -71,6 +71,17 @@ pipeline {
             }
         }
 
+      /*   stage('Simular Deploy a producción') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                sh 'mkdir -p prod && cp -r dist/* prod/'
+                echo 'Simulación de deploy completada.'
+            }
+        } */
+
+
         stage('Simular Deploy a producción') {
             when {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
@@ -80,17 +91,6 @@ pipeline {
                 echo 'Simulación de deploy completada.'
             }
         }
-
-
-        /* stage('Simular Deploy a producción') {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
-            steps {
-                sh 'mkdir -p prod && cp -r dist/* prod/'
-                echo 'Simulación de deploy completada.'
-            }
-        } */
     }
 
     post {
