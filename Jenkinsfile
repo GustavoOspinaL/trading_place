@@ -31,9 +31,14 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Instalar dependencias') {
             steps {
                 sh 'npm install'
+            }
+        }
+
+        stage('Construir proyecto') {
+            steps {
                 sh 'npm run build'
             }
         }
