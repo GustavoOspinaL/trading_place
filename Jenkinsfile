@@ -81,6 +81,7 @@ pipeline {
             }
         }
 
+
         /* stage('Simular Deploy a producción') {
             when {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
