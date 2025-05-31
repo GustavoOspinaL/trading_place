@@ -100,7 +100,7 @@ pipeline {
             // Publica resultados de pruebas (JUnit) si existen
             junit 'test-results/junit-chrome.xml'
             junit 'test-results/junit-firefox.xml'
-            
+
             // Envía correo con el resultado del pipeline
             mail(
                 to: 'anonimusa415@gmail.com',
