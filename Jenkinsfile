@@ -2,28 +2,14 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'Node_24' // Configurado en Global Tools
+        nodejs 'Node_24'
     }
-
-    /* triggers {
-        githubPush()
-    } */
 
     environment {
         VITE_ENV = 'development'
     }
 
     stages {
-        /* stage('Validar rama') {
-            when {
-                expression {
-                    return env.GIT_BRANCH == 'origin/main' || env.BRANCH_NAME == 'main'
-                }
-            }
-            steps {
-                echo "Push en rama develop detectado. Continuando..."
-            }
-        } */
 
         stage('Clonar repositorio') {
             steps {
@@ -43,8 +29,7 @@ pipeline {
             }
         }
 
-        // Crear carpeta para resultado de tests
-        stage('Prepare test-results folder') {
+        stage('Preparar carpeta para el resultado de los tests') {
             steps {
                 sh 'mkdir -p test-results'
             }
@@ -57,28 +42,27 @@ pipeline {
             }
         }
 
-        // Etapa 3: Pruebas Paralelizadas
         stage('Pruebas en Paralelo') {
             parallel {
-                stage('Tests Chrome') {
+                stage('Pruebas Chrome') {
                     steps {
                         script {
                             try {
                                 sh 'BROWSER=chrome npm test -- --browser=chrome'
                             } catch (err) {
-                                echo "Tests Chrome fallaron: ${err}"
+                                echo "Las pruebas en Chrome fallaron: ${err}"
                                 currentBuild.result = 'FAILURE'
                             }
                         }
                     }
                 }
-                stage('Tests Firefox') {
+                stage('Pruebas Firefox') {
                     steps {
                         script {
                             try {
                                 sh 'BROWSER=firefox npm test -- --browser=firefox'
                             } catch (err) {
-                                echo "Tests Firefox fallaron: ${err}"
+                                echo "Las pruebas en Firefox fallaron: ${err}"
                                 currentBuild.result = 'FAILURE'
                             }
                         }
@@ -87,7 +71,7 @@ pipeline {
             }
         }
 
-        stage('Simular Deploy') {
+        stage('Simular Deploy a producción') {
             when {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
             }
@@ -96,6 +80,16 @@ pipeline {
                 echo 'Simulación de deploy completada.'
             }
         }
+
+        /* stage('Simular Deploy a producción') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                sh 'mkdir -p prod && cp -r dist/* prod/'
+                echo 'Simulación de deploy completada.'
+            }
+        } */
     }
 
     post {
@@ -103,7 +97,6 @@ pipeline {
             junit 'test-results/junit-chrome.xml'
             junit 'test-results/junit-firefox.xml'
             
-            // Notificación por email del resultado
             mail(
                 to: 'anonimusa415@gmail.com',
                 subject: "Pipeline ${currentBuild.result}: ${env.JOB_NAME}",
