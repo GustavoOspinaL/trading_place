@@ -5,23 +5,29 @@ pipeline {
         nodejs 'Node_24' // Configurado en Global Tools
     }
 
-    triggers {
+    /* triggers {
         githubPush()
-    }
+    } */
 
     environment {
         VITE_ENV = 'development'
     }
 
     stages {
-        stage('Validar rama') {
+        /* stage('Validar rama') {
             when {
                 expression {
-                    return env.GIT_BRANCH == 'origin/develop' || env.BRANCH_NAME == 'develop'
+                    return env.GIT_BRANCH == 'origin/main' || env.BRANCH_NAME == 'main'
                 }
             }
             steps {
                 echo "Push en rama develop detectado. Continuando..."
+            }
+        } */
+
+        stage('Clonar repositorio') {
+            steps {
+                git branch: 'main', url: 'https://github.com/GustavoOspinaL/trading_place.git'
             }
         }
 
@@ -38,7 +44,7 @@ pipeline {
                 sh 'mkdir -p test-results'
             }
         }
-        
+
         stage('Pruebas Unitarias') {
             steps {
                 echo 'Ejecutando pruebas...'
@@ -75,12 +81,23 @@ pipeline {
                 }
             }
         }
+
+        stage('Simular Deploy') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                sh 'mkdir -p prod && cp -r dist/* prod/'
+                echo 'Simulación de deploy completada.'
+            }
+        }
     }
 
     post {
         always {
             junit 'test-results/junit-chrome.xml'
             junit 'test-results/junit-firefox.xml'
+            
             // Notificación por email del resultado
             mail(
                 to: 'anonimusa415@gmail.com',
